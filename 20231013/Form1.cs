@@ -204,6 +204,55 @@ namespace _20231013
             Show_DB();
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            save.FileName = "Export_Data";
+            save.Filter = "*.xlsx|*.xlsx";
+            if (save.ShowDialog() != DialogResult.OK) return;
+
+            // Excel 物件
+            Microsoft.Office.Interop.Excel.Application xls = null;
+            try
+            {
+                xls = new Microsoft.Office.Interop.Excel.Application();
+                // Excel WorkBook
+                Microsoft.Office.Interop.Excel.Workbook book = xls.Workbooks.Add();
+                //Excel.Worksheet Sheet = (Excel.Worksheet)book.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet Sheet = xls.ActiveSheet;
+
+                // 把 DataGridView 資料塞進 Excel 內
+
+                // DataGridView 標題
+                for (int k = 0; k < this.dataGridView1.Columns.Count; k++)
+                {
+                    Sheet.Cells[1, k + 1] = this.dataGridView1.Columns[k].HeaderText.ToString();
+                }
+
+                // DataGridView 內容
+                for (int i = 0; i < this.dataGridView1.Rows.Count - 1; i++)
+                {
+                    for (int j = 0; j < this.dataGridView1.Columns.Count; j++)
+                    {
+                        string value = dataGridView1.Rows[i].Cells[j].Value.ToString();
+                        Sheet.Cells[i + 2, j + 1] = value;
+                    }
+                }
+
+                // 儲存檔案
+                book.SaveAs(save.FileName);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                xls.Quit();
+            }
+
+        }
     }
 }
 
